@@ -1,0 +1,52 @@
+# YOLOv11 configuration for logo detection
+task: detect
+mode: train
+
+# Model selection
+model: yolo11n.pt  # Small model for starting out, can be changed to yolo11s.pt, yolo11m.pt, or yolo11l.pt
+
+# Dataset
+data: data/logo_data_flickr.yaml  # Path to dataset configuration
+imgsz: 640  # Image size for training
+
+# Training parameters
+epochs: 300
+batch: 16  # Adjust batch size based on available memory
+patience: 50
+optimizer: auto
+lr0: 0.01
+lrf: 0.01
+momentum: 0.937
+weight_decay: 0.0005
+warmup_epochs: 3.0
+warmup_momentum: 0.8
+warmup_bias_lr: 0.1
+close_mosaic: 10
+box: 7.5
+cls: 0.5
+hsv_h: 0.015
+hsv_s: 0.7
+hsv_v: 0.4
+degrees: 0.0
+translate: 0.1
+scale: 0.5
+shear: 0.0
+perspective: 0.0
+flipud: 0.0
+fliplr: 0.5
+mosaic: 1.0
+mixup: 0.0
+copy_paste: 0.0
+
+# Advanced parameters
+single_cls: false  # Train as single-class dataset
+rect: false  # Rectangular training
+cos_lr: false  # Cosine LR scheduler
+overlap_mask: true  # Masks should overlap
+mask_ratio: 4  # Mask downsample ratio
+dropout: 0.0  # Use dropout regularization
+
+# Saving options
+save: true  # Save train checkpoints
+save_period: -1  # Save checkpoint every x epochs (disabled if < 1)
+plots: true  # Save training plots 
