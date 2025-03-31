@@ -21,10 +21,11 @@ def parse_args():
     parser.add_argument('--save-conf', action='store_true', help='Save confidences in --save-txt labels')
     parser.add_argument('--save-crop', action='store_true', help='Save cropped prediction boxes')
     parser.add_argument('--name', default='exp', help='Save results to project/name')
-    parser.add_argument('--line-thickness', default=3, type=int, help='Bounding box thickness (pixels)')
-    parser.add_argument('--hide-labels', default=False, action='store_true', help='Hide labels')
-    parser.add_argument('--hide-conf', default=False, action='store_true', help='Hide confidences')
+    parser.add_argument('--line-width', default=3, type=int, help='Bounding box thickness (pixels)')
+    parser.add_argument('--show-labels', default=True, action='store_false', help='Show labels')
+    parser.add_argument('--show-conf', default=True, action='store_false', help='Show confidences')
     parser.add_argument('--vid-stride', type=int, default=1, help='Video frame-rate stride')
+    parser.add_argument('--project', default='runs/detect', help='Save results to project/name')
     return parser.parse_args()
 
 def main():
@@ -41,20 +42,38 @@ def main():
         "imgsz": args.img_size,
         "device": args.device,
         "show": args.view_img,
+        "save": True,  # Ensure images are saved
         "save_txt": args.save_txt,
         "save_conf": args.save_conf,
         "save_crop": args.save_crop,
         "name": args.name,
-        "line_thickness": args.line_thickness,
-        "hide_labels": args.hide_labels,
-        "hide_conf": args.hide_conf,
+        "line_width": args.line_width,
+        "show_labels": args.show_labels,
+        "show_conf": args.show_conf,
         "vid_stride": args.vid_stride,
-        "max_det": args.max_det
+        "max_det": args.max_det,
+        "project": args.project
     }
     
     # Run inference
     print(f"Running inference on {args.source}")
+    print(f"Using project path: {args.project}")
+    print(f"Using name: {args.name}")
+    full_save_path = os.path.join(os.getcwd(), args.project, args.name) if not os.path.isabs(args.project) else os.path.join(args.project, args.name)
+    print(f"Will save to: {full_save_path}")
+    
+    # Ensure the save directory exists
+    if not os.path.exists(full_save_path):
+        print(f"Creating directory: {full_save_path}")
+        os.makedirs(full_save_path, exist_ok=True)
+    
     results = model.predict(**kwargs)
+    
+    # Check if results were saved
+    print(f"Checking if result directory exists: {full_save_path}")
+    print(f"Directory exists: {os.path.exists(full_save_path)}")
+    if os.path.exists(full_save_path):
+        print(f"Contents: {os.listdir(full_save_path)}")
     
     # Print results summary
     for r in results:
@@ -67,7 +86,7 @@ def main():
         else:
             print("No logos detected")
     
-    print(f"Results saved to {os.path.join('runs/detect', args.name)}")
+    print(f"Results saved to {os.path.join(args.project, args.name)}")
 
 if __name__ == "__main__":
     main() 
